@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flying For You — Dashboard Marketing</title>
+  <meta name="description" content="Dashboard marketing Flying For You : Google Ads & ROAS, SEO, OKRs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+:root{
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --border:#e9ebef;
+  --border-2:#dfe2e8;
+  --text:#0f1729;
+  --text-2:#3d4759;
+  --muted:#8a93a3;
+  --accent:#3b5bdb;
+  --accent-2:#12a5b8;
+  --accent-weak:#eef1fd;
+  --green:#12a150;
+  --green-weak:#e7f6ee;
+  --amber:#c07a11;
+  --amber-weak:#fbf2df;
+  --red:#d64545;
+  --red-weak:#fbeaea;
+  --slate-weak:#f0f2f5;
+  --r:14px;
+  --r-s:9px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.5;
+  -webkit-font-smoothing:antialiased;font-size:14px;letter-spacing:-0.006em;
+}
+h1{letter-spacing:-0.02em}
+
+/* ---------- Layout ---------- */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:238px;flex:none;position:sticky;top:0;align-self:flex-start;height:100vh;
+  background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:22px 14px}
+.content{flex:1;min-width:0}
+.page{max-width:1060px;margin:0 auto;padding:36px 34px 64px}
+
+/* ---------- Brand ---------- */
+.brand{display:flex;align-items:center;gap:11px;padding:0 8px;margin-bottom:26px}
+.brand-logo{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,var(--accent),#5b74e8)}
+.brand-text{display:flex;flex-direction:column;line-height:1.15}
+.brand-name{font-weight:600;font-size:14.5px;color:var(--text)}
+.brand-sub{font-size:11.5px;color:var(--muted);font-weight:450}
+
+/* ---------- Nav ---------- */
+.nav{display:flex;flex-direction:column;gap:3px}
+.nav-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;appearance:none;border:none;
+  background:transparent;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--text-2);
+  padding:10px 12px;border-radius:10px;transition:background .12s,color .12s}
+.nav-item svg{color:var(--muted);flex:none;transition:color .12s}
+.nav-item:hover{background:var(--slate-weak);color:var(--text)}
+.nav-item.is-active{background:var(--accent-weak);color:var(--accent);font-weight:600}
+.nav-item.is-active svg{color:var(--accent)}
+.sidebar-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding:14px 10px 2px;border-top:1px solid var(--border)}
+
+/* ---------- Status ---------- */
+.pill{font-size:11.5px;font-weight:500;padding:4px 10px;border-radius:999px;color:var(--muted);
+  background:var(--slate-weak);display:inline-flex;align-items:center;gap:6px;align-self:flex-start}
+.pill.live{color:var(--green);background:var(--green-weak)}
+.updated{font-size:11.5px;color:var(--muted);padding-left:2px}
+
+/* ---------- Panels ---------- */
+.panel-head h1{font-size:21px;margin:0 0 5px;font-weight:600}
+.panel-sub{margin:0 0 22px;color:var(--muted);font-size:13.5px}
+.hidden{display:none}
+.loading{padding:90px 0;text-align:center;color:var(--muted)}
+
+/* ---------- KPI cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:14px;margin-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:17px 19px 15px;
+  transition:box-shadow .14s,transform .14s;overflow:hidden}
+.card:hover{box-shadow:0 10px 26px -16px rgba(15,23,41,.28);transform:translateY(-1px)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card .k-label{font-size:12px;color:var(--muted);font-weight:500}
+.card .k-value{font-size:27px;font-weight:600;margin-top:9px;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.05}
+.card .k-sub{font-size:12px;color:var(--muted);margin-top:5px}
+.chip{font-size:11.5px;font-weight:600;padding:2px 7px 2px 5px;border-radius:7px;display:inline-flex;align-items:center;gap:2px;white-space:nowrap}
+.chip.up{color:var(--green);background:var(--green-weak)}
+.chip.down{color:var(--red);background:var(--red-weak)}
+.chip.flat{color:var(--muted);background:var(--slate-weak)}
+.spark{display:block;margin-top:13px;width:100%;height:36px}
+
+/* ---------- Toolbar ---------- */
+.toolbar{display:flex;align-items:center;gap:10px;margin:2px 0 20px;font-size:13px;color:var(--muted)}
+.toolbar select{font-family:inherit;font-size:13px;padding:7px 12px;border-radius:var(--r-s);
+  border:1px solid var(--border-2);background:#fff;color:var(--text);font-weight:500;cursor:pointer}
+.toolbar select:focus{outline:2px solid var(--accent-weak);border-color:var(--accent)}
+
+/* ---------- OKR ---------- */
+.quarter{margin-bottom:26px}
+.quarter-head{display:flex;align-items:baseline;gap:12px;margin:0 0 12px}
+.quarter-badge{font-weight:600;font-size:13px;color:var(--accent);background:var(--accent-weak);padding:4px 11px;border-radius:8px}
+.quarter-progress{font-size:12.5px;color:var(--muted);font-weight:450}
+.objective{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:13px;overflow:hidden}
+.objective-title{display:flex;align-items:center;gap:9px;font-weight:600;font-size:13.5px;color:var(--text);
+  padding:13px 20px;border-bottom:1px solid var(--border);background:#fbfcfd}
+.objective-title .dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--accent)}
+.kr{display:grid;grid-template-columns:1fr 170px 138px;gap:20px;align-items:center;padding:13px 20px;border-top:1px solid var(--slate-weak)}
+.kr:first-of-type{border-top:none}
+.kr:hover{background:#fbfcfd}
+.kr-name{font-size:13.5px;color:var(--text-2);font-weight:450}
+.kr-name .mois{display:inline-block;font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-weak);border-radius:5px;padding:1px 7px;margin-left:8px}
+.kr-metric{font-size:12.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.kr-metric b{color:var(--text);font-weight:600}
+.kr-prog{display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;border-radius:99px;background:var(--slate-weak);overflow:hidden}
+.bar>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#6f86ec)}
+.kr-pct{font-size:12.5px;font-weight:600;width:40px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text-2)}
+.badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px}
+.badge.done{background:var(--green-weak);color:var(--green)}
+
+/* ---------- Tables ---------- */
+.table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:#fff}
+.data-table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;min-width:680px}
+.data-table th,.data-table td{padding:11px 16px;text-align:right;white-space:nowrap}
+.data-table th:first-child,.data-table td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1}
+.data-table thead th{background:#fafbfc;color:var(--muted);font-weight:500;font-size:12px;
+  border-bottom:1px solid var(--border);position:sticky;top:0}
+.data-table thead th:first-child{background:#fafbfc;text-align:left;z-index:3}
+.data-table tbody td{border-bottom:1px solid var(--slate-weak);color:var(--text-2)}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table tbody tr:hover td,.data-table tbody tr:hover td:first-child{background:#f9fafb}
+.data-table td.num{font-variant-numeric:tabular-nums}
+.data-table .yr{color:var(--muted)}
+.data-table tbody td:first-child{color:var(--text);font-weight:500}
+.data-table tfoot td{font-weight:600;color:var(--text);background:#f7f8fa;border-top:1px solid var(--border-2)}
+.data-table tfoot td:first-child{background:#f7f8fa}
+.data-table tfoot td.total{background:var(--accent-weak);color:var(--accent)}
+.tag{font-size:11px;font-weight:500;padding:2px 9px;border-radius:6px;display:inline-block}
+.tag.oui{background:var(--green-weak);color:var(--green)}
+.tag.non{background:var(--slate-weak);color:var(--muted)}
+.tag.stag{background:var(--amber-weak);color:var(--amber)}
+.tag.baisse{background:var(--red-weak);color:var(--red)}
+.sitetag{font-size:11px;font-weight:500;padding:2px 9px;border-radius:6px;display:inline-block;background:var(--slate-weak);color:var(--text-2)}
+.pos{color:var(--green)!important} .neg{color:var(--red)!important}
+
+/* ---------- Charts ---------- */
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px 20px;margin-bottom:22px}
+.chart-title{font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:6px}
+.chart-area{position:relative;height:300px;width:100%}
+.chart-area canvas{display:block}
+
+/* ---------- Footer ---------- */
+.page-footer{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:36px;padding-top:18px;border-top:1px solid var(--border)}
+
+@media(max-width:900px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:sticky;top:0;z-index:20;flex-direction:row;align-items:center;
+    gap:12px;padding:10px 14px;border-right:none;border-bottom:1px solid var(--border);overflow-x:auto}
+  .brand{margin-bottom:0;padding:0;flex:none}
+  .brand-text{display:none}
+  .nav{flex-direction:row;gap:4px}
+  .nav-item{padding:8px 12px;white-space:nowrap}
+  .sidebar-foot{display:none}
+  .page{padding:22px 16px 48px}
+}
+@media(max-width:560px){
+  .kr{grid-template-columns:1fr;gap:8px}
+  .kr-metric{text-align:left}
+}
+
+.empty{padding:26px;border:1px dashed var(--border-2);border-radius:var(--r);color:var(--muted);font-size:13.5px;background:#fff}
+
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg>
+        </span>
+        <div class="brand-text">
+          <span class="brand-name">Flying For You</span>
+          <span class="brand-sub">Dashboard marketing</span>
+        </div>
+      </div>
+
+      <nav class="nav" role="tablist">
+        <button class="nav-item is-active" data-tab="ads" role="tab">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Google Ads &amp; ROAS</span>
+        </button>
+        <button class="nav-item" data-tab="seo" role="tab">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>SEO</span>
+        </button>
+        <button class="nav-item" data-tab="okrs" role="tab">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4 12 14.01l-3-3"/></svg>
+          <span>OKRs</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <span id="data-source" class="pill"></span>
+        <span id="last-updated" class="updated"></span>
+      </div>
+    </aside>
+
+    <div class="content">
+      <main class="page">
+        <div id="loading" class="loading">Chargement des données…</div>
+
+        <section id="panel-ads" class="panel" role="tabpanel">
+          <div class="panel-head">
+            <h1>Google Ads &amp; ROAS</h1>
+            <p class="panel-sub">Suivi mensuel des leads Google Ads et retour sur investissement publicitaire.</p>
+          </div>
+          <div class="cards" id="ads-cards"></div>
+          <div class="chart-box"><div class="chart-title">CA généré &amp; ROAS — 24 derniers mois</div><div class="chart-area"><canvas id="ads-chart"></canvas></div></div>
+          <div class="table-scroll"><table class="data-table" id="ads-table"></table></div>
+        </section>
+
+        <section id="panel-seo" class="panel hidden" role="tabpanel">
+          <div class="panel-head">
+            <h1>SEO</h1>
+            <p class="panel-sub">KPIs de référencement mois par mois — sites Vitrine &amp; Blog.</p>
+          </div>
+          <div class="cards" id="seo-cards"></div>
+          <div class="chart-box"><div class="chart-title">Trafic organique &amp; mots-clés Top 3</div><div class="chart-area"><canvas id="seo-chart"></canvas></div></div>
+          <div class="table-scroll"><table class="data-table" id="seo-table"></table></div>
+        </section>
+
+        <section id="panel-okrs" class="panel hidden" role="tabpanel">
+          <div class="panel-head">
+            <h1>OKRs Marketing</h1>
+            <p class="panel-sub" id="okrs-note"></p>
+          </div>
+          <div class="cards" id="okrs-cards"></div>
+          <div class="toolbar">
+            <label for="okrs-quarter">Trimestre</label>
+            <select id="okrs-quarter"></select>
+          </div>
+          <div id="okrs-body"></div>
+        </section>
+
+        <footer class="page-footer">
+          <span>Flying For You — dashboard généré automatiquement</span>
+          <span id="footer-updated"></span>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+window.__CFG__={"adsSheetId": "1wsiYx4KZ68aSoMSL7nzST-iZKfBYwmw3zXjBnSqnz9k", "adsGid": 1810129057, "adsSheet": "CPA ALL", "seoSheetId": "1wsiYx4KZ68aSoMSL7nzST-iZKfBYwmw3zXjBnSqnz9k", "seoSheet": "SEO"};
+window.__OKRS__={
+  "quarters": [
+    {
+      "quarter": "Q2 2026",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition Inbound",
+          "key_results": [
+            {
+              "name": "Générer 71 500€ de CA via l'inbound",
+              "current": 42516.43,
+              "target": 71500,
+              "mois": null,
+              "progress": 0.59,
+              "status": null
+            },
+            {
+              "name": "Atteindre 1800 visites SEO",
+              "current": 1229,
+              "target": 1800,
+              "mois": null,
+              "progress": 0.68,
+              "status": null
+            },
+            {
+              "name": "Positionner 75 mots-clés business dans le Top 3",
+              "current": 50,
+              "target": 80,
+              "mois": null,
+              "progress": 0.63,
+              "status": null
+            },
+            {
+              "name": "Maintenir un coût par RDV booké moyen à 30 € (indicateur de réussite) - Moyenne de 63,2 %",
+              "current": 63.2,
+              "target": 100,
+              "mois": null,
+              "progress": 0.63,
+              "status": null
+            },
+            {
+              "name": "Générer 125 RDV bookés issus des actions marketing",
+              "current": 102,
+              "target": 125,
+              "mois": null,
+              "progress": 0.82,
+              "status": null
+            },
+            {
+              "name": "Générer 93 leads via le SEO",
+              "current": 57,
+              "target": 93,
+              "mois": null,
+              "progress": 0.61,
+              "status": null
+            },
+            {
+              "name": "Générer 300 leads via Google Ads",
+              "current": 196,
+              "target": 300,
+              "mois": null,
+              "progress": 0.65,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q1 2026",
+      "objectives": [
+        {
+          "objective": "Accélérer l'acquisition Inbound rentable",
+          "key_results": [
+            {
+              "name": "Améliorer le taux de conversion visite → lead de +25 % vs Q4 2025",
+              "current": 19,
+              "target": 25,
+              "mois": null,
+              "progress": 0.76,
+              "status": null
+            },
+            {
+              "name": "Atteindre 1 500 visites SEO",
+              "current": 857,
+              "target": 1500,
+              "mois": null,
+              "progress": 0.57,
+              "status": null
+            },
+            {
+              "name": "Positionner 55 mots-clés business dans le Top 3",
+              "current": 50,
+              "target": 55,
+              "mois": null,
+              "progress": 0.91,
+              "status": null
+            },
+            {
+              "name": "Maintenir un coût par RDV booké moyen à 55 € (indicateur de réussite) - 46,71",
+              "current": 116.54,
+              "target": 100,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 100 RDV bookés issus des actions marketing",
+              "current": 101,
+              "target": 100,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 100 leads via le SEO",
+              "current": 61,
+              "target": 100,
+              "mois": null,
+              "progress": 0.61,
+              "status": null
+            },
+            {
+              "name": "Générer 280 leads via Google Ads",
+              "current": 217,
+              "target": 280,
+              "mois": null,
+              "progress": 0.78,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q4 2025",
+      "objectives": [
+        {
+          "objective": "Attirer des leads et du new biz",
+          "key_results": [
+            {
+              "name": "Générer 10000€ via des Leads - SEO",
+              "current": 8595,
+              "target": 10000,
+              "mois": null,
+              "progress": 0.86,
+              "status": null
+            },
+            {
+              "name": "Générer 200 Leads - Google Ads",
+              "current": 171,
+              "target": 200,
+              "mois": null,
+              "progress": 0.86,
+              "status": null
+            },
+            {
+              "name": "Générer 60 Leads - SEO",
+              "current": 46,
+              "target": 60,
+              "mois": null,
+              "progress": 0.77,
+              "status": null
+            },
+            {
+              "name": "Atteindre 7 de ROAS (Google Ads)",
+              "current": 7.76,
+              "target": 7,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Avoir 25 mots clés parmi les 3 premiers",
+              "current": 38,
+              "target": 25,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 1600 visites du site via les mots clés uniquement",
+              "current": 737,
+              "target": 1600,
+              "mois": null,
+              "progress": 0.46,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q3 2025",
+      "objectives": [
+        {
+          "objective": "Attirer des leads et du new biz",
+          "key_results": [
+            {
+              "name": "Générer 250 Leads - Google Ads",
+              "current": 148,
+              "target": 250,
+              "mois": null,
+              "progress": 0.59,
+              "status": null
+            },
+            {
+              "name": "Générer 75 Leads - SEO",
+              "current": 45,
+              "target": 75,
+              "mois": null,
+              "progress": 0.6,
+              "status": null
+            },
+            {
+              "name": "Avoir 35 mots clés parmi les 3 premiers",
+              "current": 17,
+              "target": 35,
+              "mois": null,
+              "progress": 0.49,
+              "status": null
+            },
+            {
+              "name": "Atteindre 9 de ROAS (Google Ads)",
+              "current": 4.43,
+              "target": 9,
+              "mois": null,
+              "progress": 0.49,
+              "status": null
+            },
+            {
+              "name": "Générer 1 750 visites du site via les mots clés uniquement",
+              "current": 821,
+              "target": 1750,
+              "mois": null,
+              "progress": 0.47,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q2 2025",
+      "objectives": [
+        {
+          "objective": "Attirer des leads et du new biz",
+          "key_results": [
+            {
+              "name": "Atteindre un coût de RDV GA à 40€",
+              "current": 20,
+              "target": 40,
+              "mois": null,
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Générer 1 500 visites du site via les mots clés uniquement",
+              "current": 947,
+              "target": 1500,
+              "mois": null,
+              "progress": 0.63,
+              "status": null
+            },
+            {
+              "name": "Atteindre 6 de ROAS",
+              "current": 8.2,
+              "target": 6,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Avoir 30 mots clés parmi les 3 premiers",
+              "current": 21,
+              "target": 30,
+              "mois": null,
+              "progress": 0.7,
+              "status": null
+            },
+            {
+              "name": "Générer 85 Leads - SEO",
+              "current": 47,
+              "target": 85,
+              "mois": null,
+              "progress": 0.55,
+              "status": null
+            },
+            {
+              "name": "Générer 375 Leads - Google Ads",
+              "current": 154,
+              "target": 375,
+              "mois": null,
+              "progress": 0.41,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q1 2025",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Avoir 30 mots clés parmi les 3 premiers",
+              "current": 20,
+              "target": 30,
+              "mois": null,
+              "progress": 0.67,
+              "status": null
+            },
+            {
+              "name": "Générer 2000 visites du site via les mots clés",
+              "current": 971,
+              "target": 2000,
+              "mois": null,
+              "progress": 0.49,
+              "status": null
+            },
+            {
+              "name": "Atteindre un ROAS de 7",
+              "current": 4.5,
+              "target": 7,
+              "mois": null,
+              "progress": 0.64,
+              "status": null
+            },
+            {
+              "name": "Signer 10 Deals venant de Google Ads",
+              "current": 5,
+              "target": 10,
+              "mois": null,
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Atteindre un coût de RDV de 40€ - Google Ads",
+              "current": 0.0196,
+              "target": 0.025,
+              "mois": null,
+              "progress": 0.78,
+              "status": null
+            },
+            {
+              "name": "Générer 75 Leads - SEO",
+              "current": 51,
+              "target": 75,
+              "mois": null,
+              "progress": 0.68,
+              "status": null
+            },
+            {
+              "name": "Générer 350 Leads - Google Ads",
+              "current": 232,
+              "target": 350,
+              "mois": null,
+              "progress": 0.66,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q4 2024",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "ROAS Google Ads de 6",
+              "current": 5.3,
+              "target": 6,
+              "mois": null,
+              "progress": 0.88,
+              "status": null
+            },
+            {
+              "name": "8 deals entrant venant de GA",
+              "current": 8,
+              "target": 8,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Atteindre 150 rdv pris - Google Ads",
+              "current": 81,
+              "target": 150,
+              "mois": null,
+              "progress": 0.54,
+              "status": null
+            },
+            {
+              "name": "Générer 300 Leads - Google Ads",
+              "current": 200,
+              "target": 300,
+              "mois": null,
+              "progress": 0.67,
+              "status": null
+            },
+            {
+              "name": "Générer 40 Leads SEO",
+              "current": 35,
+              "target": 40,
+              "mois": null,
+              "progress": 0.88,
+              "status": null
+            },
+            {
+              "name": "Atteindre un coût par rdv pris de 40€",
+              "current": 52.75,
+              "target": 40,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 2000 de trafic via les mots clés organiques",
+              "current": 776,
+              "target": 2000,
+              "mois": null,
+              "progress": 0.39,
+              "status": null
+            },
+            {
+              "name": "Avoir 30 mots clés parmi les 3 premiers",
+              "current": 16,
+              "target": 30,
+              "mois": null,
+              "progress": 0.53,
+              "status": null
+            },
+            {
+              "name": "Atteindre 20 rdv pris - SEO",
+              "current": 10,
+              "target": 20,
+              "mois": null,
+              "progress": 0.5,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q2 2024",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Atteindre 25 rdv pris - SEO",
+              "current": 15,
+              "target": 25,
+              "mois": null,
+              "progress": 0.6,
+              "status": null
+            },
+            {
+              "name": "Avoir 30 mots clés parmi les 3 premiers",
+              "current": 23,
+              "target": 30,
+              "mois": null,
+              "progress": 0.77,
+              "status": null
+            },
+            {
+              "name": "Générer 2200 de trafic via les mots clés organiques",
+              "current": 1380,
+              "target": 2200,
+              "mois": null,
+              "progress": 0.63,
+              "status": null
+            },
+            {
+              "name": "Atteindre un coût par rdv pris de 40€",
+              "current": 43,
+              "target": 40,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 50 Leads SEO",
+              "current": 34,
+              "target": 50,
+              "mois": null,
+              "progress": 0.68,
+              "status": null
+            },
+            {
+              "name": "Générer 350 Leads - Google Ads",
+              "current": 256,
+              "target": 350,
+              "mois": null,
+              "progress": 0.73,
+              "status": null
+            },
+            {
+              "name": "Atteindre 115 rdv pris - Google Ads",
+              "current": 95,
+              "target": 115,
+              "mois": null,
+              "progress": 0.83,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q1 2024",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Atteindre un coût par rdv pris de 45€",
+              "current": 43,
+              "target": 45,
+              "mois": null,
+              "progress": 0.96,
+              "status": null
+            },
+            {
+              "name": "Générer 2000 de trafic via les mots clés organiques",
+              "current": 1450,
+              "target": 2000,
+              "mois": null,
+              "progress": 0.73,
+              "status": null
+            },
+            {
+              "name": "Avoir 25 mots clés parmi les 3 premiers",
+              "current": 20,
+              "target": 25,
+              "mois": null,
+              "progress": 0.8,
+              "status": null
+            },
+            {
+              "name": "Atteindre 20 rdv pris - SEO",
+              "current": 16,
+              "target": 20,
+              "mois": null,
+              "progress": 0.8,
+              "status": null
+            },
+            {
+              "name": "Atteindre 90 rdv pris - Google Ads",
+              "current": 80,
+              "target": 90,
+              "mois": null,
+              "progress": 0.89,
+              "status": null
+            },
+            {
+              "name": "Générer 300 Leads GA",
+              "current": 214,
+              "target": 300,
+              "mois": null,
+              "progress": 0.71,
+              "status": null
+            },
+            {
+              "name": "Générer 40 Leads SEO",
+              "current": 34,
+              "target": 40,
+              "mois": null,
+              "progress": 0.85,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q4 2023",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Générer 50 Leads SEO",
+              "current": 27,
+              "target": 50,
+              "mois": null,
+              "progress": 0.54,
+              "status": null
+            },
+            {
+              "name": "Augmenter de 75% le nombre de visiteurs SEO sur le site",
+              "current": 83.99,
+              "target": 75,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 350 Leads GA",
+              "current": 237,
+              "target": 350,
+              "mois": null,
+              "progress": 0.68,
+              "status": null
+            },
+            {
+              "name": "Atteindre 90 rdv pris - Google Ads",
+              "current": 92,
+              "target": 90,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Atteindre un coût par rdv pris de 40€",
+              "current": 54,
+              "target": 40,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Atteindre 30 rdv pris - SEO",
+              "current": 11,
+              "target": 30,
+              "mois": null,
+              "progress": 0.37,
+              "status": null
+            },
+            {
+              "name": "Avoir 20 mots clés parmi les 3 premiers",
+              "current": 17,
+              "target": 20,
+              "mois": null,
+              "progress": 0.85,
+              "status": null
+            },
+            {
+              "name": "Générer 1000 de trafic via les mots clés organiques",
+              "current": 1562,
+              "target": 1000,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q3 2023",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Atteindre 10 rdv pris - SEO",
+              "current": 7,
+              "target": 10,
+              "mois": "Septembre",
+              "progress": 0.7,
+              "status": null
+            },
+            {
+              "name": "Atteindre 10 rdv pris - SEO",
+              "current": 5,
+              "target": 10,
+              "mois": "Août",
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Atteindre 10 rdv pris - SEO",
+              "current": 3,
+              "target": 10,
+              "mois": "Juillet",
+              "progress": 0.3,
+              "status": null
+            },
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 4,
+              "target": 20,
+              "mois": "Septembre",
+              "progress": 0.2,
+              "status": null
+            },
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 10,
+              "target": 20,
+              "mois": "Août",
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 6,
+              "target": 20,
+              "mois": "Juillet",
+              "progress": 0.3,
+              "status": null
+            },
+            {
+              "name": "Atteindre 40 rdv pris - Google Ads",
+              "current": 19,
+              "target": 40,
+              "mois": "Septembre",
+              "progress": 0.48,
+              "status": null
+            },
+            {
+              "name": "Atteindre 40 rdv pris - Google Ads",
+              "current": 18,
+              "target": 40,
+              "mois": "Août",
+              "progress": 0.45,
+              "status": null
+            },
+            {
+              "name": "Atteindre 40 rdv pris - Google Ads",
+              "current": 25,
+              "target": 40,
+              "mois": "Juillet",
+              "progress": 0.63,
+              "status": null
+            },
+            {
+              "name": "Générer 110 Leads GA",
+              "current": 113,
+              "target": 110,
+              "mois": "Septembre",
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Générer 110 Leads GA",
+              "current": 71,
+              "target": 110,
+              "mois": "Août",
+              "progress": 0.65,
+              "status": null
+            },
+            {
+              "name": "Générer 110 Leads GA",
+              "current": 77,
+              "target": 110,
+              "mois": "Juillet",
+              "progress": 0.7,
+              "status": null
+            },
+            {
+              "name": "Générer 600 de trafic via les mots clés organiques",
+              "current": 685,
+              "target": 600,
+              "mois": null,
+              "progress": null,
+              "status": "Completed"
+            },
+            {
+              "name": "Avoir 15 mots clés parmi les 3 premiers",
+              "current": 12,
+              "target": 15,
+              "mois": null,
+              "progress": 0.8,
+              "status": null
+            },
+            {
+              "name": "Atteindre 30 rdv pris - SEO",
+              "current": 15,
+              "target": 30,
+              "mois": null,
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Atteindre un coût par rdv pris de 35€",
+              "current": 80,
+              "target": -35,
+              "mois": null,
+              "progress": -2.29,
+              "status": null
+            },
+            {
+              "name": "Atteindre 120 rdv pris - Google Ads",
+              "current": 62,
+              "target": 120,
+              "mois": null,
+              "progress": 0.52,
+              "status": null
+            },
+            {
+              "name": "Générer 330 Leads GA",
+              "current": 261,
+              "target": 330,
+              "mois": null,
+              "progress": 0.79,
+              "status": null
+            },
+            {
+              "name": "Réduire le taux de rebond sur le site de 5%",
+              "current": -2,
+              "target": -5,
+              "mois": null,
+              "progress": 0.4,
+              "status": null
+            },
+            {
+              "name": "Générer 60 Leads SEO",
+              "current": 20,
+              "target": 60,
+              "mois": null,
+              "progress": 0.33,
+              "status": null
+            },
+            {
+              "name": "Augmenter de 75% le nombre de visiteurs SEO sur le site",
+              "current": 46,
+              "target": 75,
+              "mois": null,
+              "progress": 0.61,
+              "status": null
+            },
+            {
+              "name": "Améliorer le taux de conversion des Landing pages de 3%",
+              "current": 2.5,
+              "target": 3,
+              "mois": null,
+              "progress": 0.83,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q2 2023",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Générer 15 Leads SEO",
+              "current": 5,
+              "target": 15,
+              "mois": "Juin",
+              "progress": 0.33,
+              "status": null
+            },
+            {
+              "name": "Générer 15 Leads SEO",
+              "current": 14,
+              "target": 15,
+              "mois": "Mai",
+              "progress": 0.93,
+              "status": null
+            },
+            {
+              "name": "Générer 15 Leads SEO",
+              "current": 10,
+              "target": 15,
+              "mois": "Avril",
+              "progress": 0.67,
+              "status": null
+            },
+            {
+              "name": "Générer 45 Leads SEO",
+              "current": 29,
+              "target": 45,
+              "mois": null,
+              "progress": 0.64,
+              "status": null
+            },
+            {
+              "name": "Augmenter de 75% le nombre de visiteurs SEO sur le site",
+              "current": 29.25,
+              "target": 75,
+              "mois": null,
+              "progress": 0.39,
+              "status": null
+            },
+            {
+              "name": "Réduire le taux de rebond sur le site de 7%",
+              "current": 0,
+              "target": 7,
+              "mois": null,
+              "progress": 0.0,
+              "status": null
+            },
+            {
+              "name": "Améliorer le taux de conversion des Landing pages de 5%",
+              "current": 0.83,
+              "target": 5,
+              "mois": null,
+              "progress": 0.17,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quarter": "Q1 2023",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition",
+          "key_results": [
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 10,
+              "target": 20,
+              "mois": "Mars",
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 7,
+              "target": 20,
+              "mois": "Février",
+              "progress": 0.35,
+              "status": null
+            },
+            {
+              "name": "Générer 20 Leads SEO",
+              "current": 10,
+              "target": 20,
+              "mois": "Janvier",
+              "progress": 0.5,
+              "status": null
+            },
+            {
+              "name": "Améliorer le taux de conversion des Landing pages de 20%",
+              "current": 0.46,
+              "target": 20,
+              "mois": null,
+              "progress": 0.02,
+              "status": null
+            },
+            {
+              "name": "Réduire le taux de rebond sur le site de 10%",
+              "current": 0,
+              "target": 10,
+              "mois": null,
+              "progress": 0.0,
+              "status": null
+            },
+            {
+              "name": "Augmenter de 75% le nombre de visiteurs SEO sur le site",
+              "current": 24.3,
+              "target": 75,
+              "mois": null,
+              "progress": 0.32,
+              "status": null
+            },
+            {
+              "name": "Générer 60 Leads SEO",
+              "current": 27,
+              "target": 60,
+              "mois": null,
+              "progress": 0.45,
+              "status": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "count": 105,
+  "note": "Vue Market — Q3 2026 exclu (non terminé)"
+};
+</script>
+<script>
+/* Flying For You — Dashboard Marketing
+   Rendu 100% client-side depuis data/data.json (généré par le pipeline). */
+(function () {
+  "use strict";
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+  const MONTH_ORDER = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+  const nf0 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  const nf2 = new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const eur0 = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const fmtInt = v => (v == null || v === "") ? "—" : nf0.format(v);
+  const fmtEur = v => (v == null || v === "") ? "—" : eur0.format(v);
+  const fmtNum2 = v => (v == null || v === "") ? "—" : nf2.format(v);
+  const fmtPct = v => (v == null || v === "") ? "—" : nf0.format(v * 100) + " %";
+
+  function progColor(p, status) {
+    if (status) return "var(--green)";
+    if (p == null) return "var(--muted)";
+    if (p >= 1) return "var(--green)";
+    if (p >= 0.7) return "var(--blue)";
+    if (p >= 0.4) return "var(--amber)";
+    return "var(--red)";
+  }
+
+  /* ---------------- OKRs ---------------- */
+  function renderOKRs(okrs) {
+    $("#okrs-note").textContent = okrs.note || "";
+    const quarters = okrs.quarters || [];
+    // Cards : trimestre courant (le premier)
+    const cardsWrap = $("#okrs-cards"); cardsWrap.innerHTML = "";
+    if (quarters.length) {
+      const cur = quarters[0];
+      const krs = cur.objectives.flatMap(o => o.key_results);
+      const withProg = krs.filter(k => typeof k.progress === "number");
+      const avg = withProg.length ? withProg.reduce((s, k) => s + Math.max(0, Math.min(k.progress, 1)), 0) / withProg.length : 0;
+      const nObj = cur.objectives.length;
+      cardsWrap.append(
+        card(cur.quarter, "Trimestre en cours", nObj + " objectif" + (nObj > 1 ? "s" : "") + " suivi" + (nObj > 1 ? "s" : ""), "accent-1"),
+        card(nf0.format(avg * 100) + " %", "Progression moyenne", "sur " + krs.length + " key results", "accent-2"),
+        card(String(krs.length), "Key Results ce trimestre", "objectifs clés mesurés", "accent-3"),
+        card(String(okrs.count || krs.length), "Historique", "KR sur tous les trimestres", "accent-4")
+      );
+    }
+    // Filtre trimestre
+    const sel = $("#okrs-quarter");
+    sel.innerHTML = '<option value="__all">Tous</option>' + quarters.map(q => `<option value="${q.quarter}">${q.quarter}</option>`).join("");
+    sel.value = quarters.length ? quarters[0].quarter : "__all";
+    const draw = () => drawQuarters(quarters, sel.value);
+    sel.onchange = draw;
+    draw();
+  }
+
+  const COLORS = { blue: "#3b5bdb", green: "#12a150", teal: "#12a5b8", amber: "#c07a11" };
+
+  function card(value, label, sub, accent, extra) {
+    extra = extra || {};
+    const c = el("div", "card" + (accent ? " " + accent : ""));
+    const top = el("div", "card-top");
+    top.append(el("div", "k-label", label));
+    if (extra.chip) top.append(chipEl(extra.chip));
+    c.append(top);
+    c.append(el("div", "k-value", value));
+    if (sub) c.append(el("div", "k-sub", sub));
+    if (extra.spark && extra.spark.filter(v => v != null).length > 1) {
+      const s = el("div"); s.innerHTML = sparkSVG(extra.spark, extra.sparkColor || COLORS.blue);
+      c.append(s.firstChild);
+    }
+    return c;
+  }
+
+  function chipEl(o) {
+    const d = (o.cur || 0) - (o.prev || 0);
+    let cls = "flat", arrow = "→";
+    if (d > 0) { cls = o.invert ? "down" : "up"; arrow = "▲"; }
+    else if (d < 0) { cls = o.invert ? "up" : "down"; arrow = "▼"; }
+    const fmt = o.fmt || (v => nf0.format(v));
+    return el("span", "chip " + cls, arrow + " " + (d === 0 ? "0" : fmt(Math.abs(d))));
+  }
+
+  function sparkSVG(vals, color) {
+    const nums = vals.map(v => (v == null ? 0 : +v));
+    const w = 150, h = 36, p = 3;
+    const min = Math.min(...nums), max = Math.max(...nums), rng = (max - min) || 1;
+    const step = (w - 2 * p) / (nums.length - 1 || 1);
+    const pts = nums.map((v, i) => [p + i * step, h - p - ((v - min) / rng) * (h - 2 * p)]);
+    const line = pts.map((pt, i) => (i ? "L" : "M") + pt[0].toFixed(1) + " " + pt[1].toFixed(1)).join(" ");
+    const area = line + " L " + (w - p).toFixed(1) + " " + (h - p) + " L " + p + " " + (h - p) + " Z";
+    return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+      '<path d="' + area + '" fill="' + color + '" opacity="0.09"/>' +
+      '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  function drawQuarters(quarters, filter) {
+    const body = $("#okrs-body"); body.innerHTML = "";
+    quarters.filter(q => filter === "__all" || q.quarter === filter).forEach(q => {
+      const krs = q.objectives.flatMap(o => o.key_results);
+      const withProg = krs.filter(k => typeof k.progress === "number");
+      const avg = withProg.length ? withProg.reduce((s, k) => s + Math.max(0, Math.min(k.progress, 1)), 0) / withProg.length : 0;
+      const sec = el("div", "quarter");
+      const head = el("div", "quarter-head");
+      head.append(el("span", "quarter-badge", q.quarter), el("span", "quarter-progress", nf0.format(avg * 100) + " % · " + krs.length + " KR"));
+      sec.append(head);
+      q.objectives.forEach(o => {
+        const box = el("div", "objective");
+        box.append(el("div", "objective-title", '<span class="dot"></span>' + escapeHtml(o.objective)));
+        o.key_results.forEach(k => box.append(krRow(k)));
+        sec.append(box);
+      });
+      body.append(sec);
+    });
+  }
+
+  function krRow(k) {
+    const row = el("div", "kr");
+    const name = el("div", "kr-name", escapeHtml(k.name) + (k.mois ? ` <span class="mois">${k.mois}</span>` : ""));
+    const metric = el("div", "kr-metric");
+    if (k.current != null || k.target != null)
+      metric.innerHTML = `<b>${k.current != null ? nf0.format(k.current) : "—"}</b> / ${k.target != null ? nf0.format(k.target) : "—"}`;
+    const prog = el("div", "kr-prog");
+    if (k.status) {
+      prog.innerHTML = `<span class="badge done">Terminé</span>`;
+    } else {
+      const p = typeof k.progress === "number" ? k.progress : 0;
+      const w = Math.max(0, Math.min(p, 1)) * 100;
+      const bar = el("div", "bar"); const fill = el("span"); fill.style.width = w + "%"; fill.style.background = progColor(p, null); bar.append(fill);
+      const pct = el("span", "kr-pct", (p * 100).toFixed(0) + "%"); pct.style.color = progColor(p, null);
+      prog.append(bar, pct);
+    }
+    row.append(name, metric, prog);
+    return row;
+  }
+
+  /* ---------------- Google Ads ---------------- */
+  let adsChart, seoChart;
+  function renderAds(ads) {
+    const rows = (ads.rows || []).filter(r => r.cout_ga != null);
+    const active = rows.filter(r => r.ca != null);
+    // Cards : dernier mois avec CA, cumul année en cours
+    const last = [...active].reverse().find(r => r.ca > 0) || active[active.length - 1] || {};
+    const curYear = Math.max(...rows.map(r => r.annee));
+    const yearRows = rows.filter(r => r.annee === curYear);
+    const caYtd = yearRows.reduce((s, r) => s + (r.ca || 0), 0);
+    const coutYtd = yearRows.reduce((s, r) => s + (r.cout_ga || 0), 0);
+    const roasYtd = coutYtd ? caYtd / coutYtd : 0;
+    const withData = active.filter(r => r.ca > 0);
+    const prevData = withData[withData.length - 2] || {};
+    const s12 = active.slice(-12);
+    const cards = $("#ads-cards"); cards.innerHTML = "";
+    cards.append(
+      card(fmtNum2(last.roas_ca), "ROAS CA — dernier mois", (last.periode || "") + " " + (last.annee || ""), null,
+        { spark: s12.map(r => r.roas_ca), sparkColor: COLORS.blue, chip: { cur: last.roas_ca, prev: prevData.roas_ca, fmt: v => nf2.format(v) } }),
+      card(fmtEur(caYtd), "CA généré " + curYear, "cumul année", null,
+        { spark: yearRows.map(r => r.ca), sparkColor: COLORS.teal }),
+      card(fmtNum2(roasYtd), "ROAS CA " + curYear, "CA / coût GA sur l'année", null,
+        { spark: s12.map(r => r.roas_ca), sparkColor: COLORS.green }),
+      card(fmtEur(coutYtd), "Coût Google Ads " + curYear, "cumul dépense", null,
+        { spark: yearRows.map(r => r.cout_ga), sparkColor: COLORS.amber })
+    );
+    // Corps du tableau
+    const bodyRows = active.map(r => [
+      r.periode, { v: r.annee, cls: "yr num" }, { v: fmtEur(r.cout_ga), cls: "num" }, { v: fmtInt(r.demande_devis), cls: "num" },
+      { v: fmtInt(r.nb_rdv), cls: "num" }, { v: fmtInt(r.nb_opes), cls: "num" }, { v: fmtPct(r.tx_conv_devis), cls: "num" },
+      { v: fmtEur(r.ca), cls: "num" }, { v: fmtEur(r.marge), cls: "num" },
+      { v: fmtNum2(r.roas_ca), cls: "num " + (r.roas_ca >= 1 ? "pos" : (r.ca ? "neg" : "")) },
+      { v: fmtNum2(r.roas_marge), cls: "num " + (r.roas_marge >= 1 ? "pos" : (r.ca ? "neg" : "")) }
+    ]);
+    // Récap en bas : total par année + total général
+    const footRows = adsRecap(active);
+    buildTable($("#ads-table"), ads.columns, bodyRows, footRows);
+    // Chart : 24 derniers mois
+    const recent = active.slice(-24);
+    const labels = recent.map(r => r.periode.slice(0, 3) + " " + String(r.annee).slice(2));
+    drawChart("ads-chart", adsChart, c => (adsChart = c), "bar", {
+      labels,
+      datasets: [
+        { label: "CA généré", data: recent.map(r => r.ca), backgroundColor: "rgba(59,91,219,.16)", borderColor: "rgba(59,91,219,.45)", borderWidth: 1, yAxisID: "y", borderRadius: 3, maxBarThickness: 18, order: 2 },
+        { type: "line", label: "ROAS CA", data: recent.map(r => r.roas_ca), borderColor: "#0f1729", backgroundColor: "#0f1729", tension: .3, yAxisID: "y1", pointRadius: 0, pointHoverRadius: 4, borderWidth: 2, order: 1 }
+      ]
+    }, {
+      y: { position: "left", title: { display: true, text: "CA (€)" }, ticks: { callback: v => v >= 1000 ? nf0.format(v / 1000) + " k" : nf0.format(v) } },
+      y1: { position: "right", title: { display: true, text: "ROAS" }, grid: { drawOnChartArea: false }, ticks: { callback: v => v + "×" } }
+    });
+  }
+
+  /* ---------------- SEO ---------------- */
+  function aggregateByMonth(rows) {
+    const map = new Map();
+    rows.forEach(r => {
+      const key = r.annee + "-" + String(monthIndex(r.mois)).padStart(2, "0");
+      if (!map.has(key)) map.set(key, { annee: r.annee, mois: r.mois, trafic: 0, top3: 0, top10: 0, top20: 0, nb_mc: 0, authority: 0 });
+      const a = map.get(key);
+      ["trafic", "top3", "top10", "top20", "nb_mc"].forEach(k => { a[k] += (r[k] || 0); });
+      a.authority = Math.max(a.authority, r.authority || 0);
+    });
+    return [...map.values()].sort((x, y) => (x.annee - y.annee) || (monthIndex(x.mois) - monthIndex(y.mois)));
+  }
+
+  function renderSEO(seo) {
+    const rows = seo.rows || [];
+    const monthly = aggregateByMonth(rows);       // 1 point / mois (Vitrine + Blog cumulés)
+    const last = monthly[monthly.length - 1] || {};
+    const prev = monthly[monthly.length - 2] || {};
+    const cards = $("#seo-cards"); cards.innerHTML = "";
+    const lbl = (last.mois || "") + " " + (last.annee || "");
+    const m12 = monthly.slice(-12);
+    cards.append(
+      card(fmtInt(last.trafic), "Trafic organique", lbl, null, { spark: m12.map(r => r.trafic), sparkColor: COLORS.blue, chip: { cur: last.trafic, prev: prev.trafic } }),
+      card(fmtInt(last.top3), "Mots-clés Top 3", lbl, null, { spark: m12.map(r => r.top3), sparkColor: COLORS.green, chip: { cur: last.top3, prev: prev.top3 } }),
+      card(fmtInt(last.top10), "Mots-clés Top 10", lbl, null, { spark: m12.map(r => r.top10), sparkColor: COLORS.teal, chip: { cur: last.top10, prev: prev.top10 } }),
+      card(fmtInt(last.nb_mc), "Mots-clés suivis", lbl, null, { spark: m12.map(r => r.nb_mc), sparkColor: COLORS.amber, chip: { cur: last.nb_mc, prev: prev.nb_mc } })
+    );
+    // Tableau : le plus récent en haut, détail Vitrine / Blog conservé
+    const tableRows = [...rows].sort((a, b) => (b.annee - a.annee) || (monthIndex(b.mois) - monthIndex(a.mois)) || (a.site || "").localeCompare(b.site || ""));
+    buildTable($("#seo-table"), seo.columns, tableRows.map(r => [
+      { v: siteTag(r.site), raw: true }, r.mois, { v: r.annee, cls: "yr num" }, { v: fmtInt(r.authority), cls: "num" }, { v: fmtInt(r.trafic), cls: "num" },
+      { v: fmtInt(r.nb_mc), cls: "num" }, { v: fmtInt(r.top3), cls: "num" }, { v: fmtInt(r.top10), cls: "num" }, { v: fmtInt(r.top20), cls: "num" },
+      { v: tagFor(r.amelioration), raw: true }
+    ]));
+    const labels = monthly.map(r => (r.mois || "").slice(0, 3) + " " + String(r.annee).slice(2));
+    drawChart("seo-chart", seoChart, c => (seoChart = c), "line", {
+      labels,
+      datasets: [
+        { label: "Trafic organique", data: monthly.map(r => r.trafic), borderColor: "#3b5bdb", backgroundColor: "rgba(59,91,219,.10)", fill: true, tension: .3, yAxisID: "y", pointRadius: 0, pointHoverRadius: 4, borderWidth: 2 },
+        { label: "MC en Top 3", data: monthly.map(r => r.top3), borderColor: "#12a150", backgroundColor: "#12a150", tension: .3, yAxisID: "y1", pointRadius: 0, pointHoverRadius: 4, borderWidth: 2 }
+      ]
+    }, {
+      y: { position: "left", title: { display: true, text: "Trafic" } },
+      y1: { position: "right", title: { display: true, text: "MC Top 3" }, grid: { drawOnChartArea: false } }
+    });
+  }
+
+  function siteTag(site) {
+    const s = (site || "").toLowerCase();
+    let cls = "site-vb";
+    if (s === "vitrine") cls = "site-v"; else if (s === "blog") cls = "site-b";
+    return `<span class="sitetag ${cls}">${escapeHtml(site || "—")}</span>`;
+  }
+
+  function tagFor(v) {
+    const s = (v || "").toLowerCase();
+    let cls = "non";
+    if (s === "oui") cls = "oui"; else if (s.includes("stagn")) cls = "stag"; else if (s.includes("baisse")) cls = "baisse";
+    return `<span class="tag ${cls}">${escapeHtml(v || "—")}</span>`;
+  }
+  const monthIndex = m => MONTH_ORDER.indexOf(m);
+  function sortByMonth(a, b) { return (a.annee - b.annee) || (monthIndex(a.mois) - monthIndex(b.mois)); }
+
+  /* ---------------- helpers ---------------- */
+  function rowTo(tr, r) {
+    r.forEach(cell => {
+      if (cell && typeof cell === "object") {
+        const td = el("td", cell.cls || null);
+        if (cell.raw) td.innerHTML = cell.v; else td.textContent = cell.v;
+        tr.append(td);
+      } else {
+        const td = el("td"); td.textContent = cell == null ? "" : cell; tr.append(td);
+      }
+    });
+  }
+
+  function buildTable(table, columns, rows, footRows) {
+    table.innerHTML = "";
+    const thead = el("thead"); const trh = el("tr");
+    columns.forEach(c => trh.append(el("th", null, escapeHtml(c))));
+    thead.append(trh); table.append(thead);
+    const tb = el("tbody");
+    rows.forEach(r => { const tr = el("tr"); rowTo(tr, r); tb.append(tr); });
+    table.append(tb);
+    if (footRows && footRows.length) {
+      const tf = el("tfoot");
+      footRows.forEach(r => { const tr = el("tr"); rowTo(tr, r); tf.append(tr); });
+      table.append(tf);
+    }
+  }
+
+  function adsRecap(active) {
+    const years = [...new Set(active.map(r => r.annee))].sort();
+    const mk = (label, rows, total) => {
+      const sum = k => rows.reduce((s, r) => s + (r[k] || 0), 0);
+      const cout = sum("cout_ga"), ca = sum("ca"), marge = sum("marge"),
+            devis = sum("demande_devis"), rdv = sum("nb_rdv"), opes = sum("nb_opes");
+      const cls = "num recap" + (total ? " total" : "");
+      return [
+        { v: label, cls: "recap" + (total ? " total" : "") }, { v: "", cls },
+        { v: fmtEur(cout), cls }, { v: fmtInt(devis), cls }, { v: fmtInt(rdv), cls }, { v: fmtInt(opes), cls },
+        { v: devis ? fmtPct(opes / devis) : "—", cls }, { v: fmtEur(ca), cls }, { v: fmtEur(marge), cls },
+        { v: cout ? fmtNum2(ca / cout) : "—", cls }, { v: cout ? fmtNum2(marge / cout) : "—", cls }
+      ];
+    };
+    const foot = years.map(y => mk("Total " + y, active.filter(r => r.annee === y), false));
+    foot.push(mk("Total général", active, true));
+    return foot;
+  }
+
+  function drawChart(id, existing, store, type, data, scales) {
+    if (typeof Chart === "undefined") return;
+    const ctx = document.getElementById(id);
+    if (existing) existing.destroy();
+    const MUTED = "#8a93a3", GRID = "#eef1f5", FT = { family: "Inter", size: 10 };
+    const finalScales = {
+      x: { grid: { display: false }, border: { display: false },
+           ticks: { color: MUTED, font: FT, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } }
+    };
+    for (const k in scales) {
+      const def = { grid: { color: GRID, drawTicks: false }, border: { display: false }, beginAtZero: true,
+                    title: { color: MUTED, font: { family: "Inter", size: 11 } },
+                    ticks: { color: MUTED, font: FT, padding: 6, maxTicksLimit: 6 } };
+      const m = Object.assign({}, def, scales[k]);
+      m.ticks = Object.assign({}, def.ticks, scales[k].ticks || {});
+      m.grid = Object.assign({}, def.grid, scales[k].grid || {});
+      m.title = Object.assign({}, def.title, scales[k].title || {});
+      finalScales[k] = m;
+    }
+    store(new Chart(ctx, {
+      type: type,
+      data: data,
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        elements: { line: { borderJoinStyle: "round" } },
+        plugins: {
+          legend: { position: "bottom", align: "center",
+            labels: { usePointStyle: true, pointStyle: "circle", boxWidth: 7, boxHeight: 7, padding: 18, color: "#3d4759", font: { family: "Inter", size: 12 } } },
+          tooltip: { backgroundColor: "#0f1729", padding: 10, cornerRadius: 8, displayColors: true, boxPadding: 4,
+            titleFont: { family: "Inter", size: 12 }, bodyFont: { family: "Inter", size: 12 } }
+        },
+        scales: finalScales
+      }
+    }));
+  }
+
+  function escapeHtml(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m])); }
+
+  function setupTabs() {
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        ["okrs", "ads", "seo"].forEach(t => $("#panel-" + t).classList.toggle("hidden", t !== btn.dataset.tab));
+      });
+    });
+  }
+
+
+  /* ---------------- Chargement live Google Sheets (gviz JSONP) ---------------- */
+  const ADS_COLS = ["Période","Année","Coût GA (€)","Demande de devis","Nombre de RDV","Nombre d'opés","Tx de conv devis","CA généré (€)","Marge (€)","ROAS CA","ROAS Marge"];
+  const SEO_COLS = ["Quel site ?","Mois","Année","Authority Score","Trafic organique","Nombre de MC","MC en top 3","MC en top 10","MC en top 20","Amélioration ?"];
+  let __cbN = 0;
+  function loadSheet(sheetId, sheetName, gid) {
+    return new Promise((resolve, reject) => {
+      const cb = "__gviz_cb_" + (++__cbN);
+      const q = (gid != null) ? ("gid=" + gid) : ("sheet=" + encodeURIComponent(sheetName));
+      const url = "https://docs.google.com/spreadsheets/d/" + sheetId +
+        "/gviz/tq?tqx=out:json;responseHandler:" + cb + "&headers=1&" + q;
+      const s = document.createElement("script");
+      let done = false;
+      const cleanup = () => { try { delete window[cb]; } catch (e) { window[cb] = undefined; } s.remove(); };
+      window[cb] = (resp) => { done = true; try { resolve(parseGviz(resp)); } catch (e) { reject(e); } cleanup(); };
+      s.onerror = () => { if (!done) { reject(new Error("script error")); cleanup(); } };
+      s.src = url; document.head.appendChild(s);
+      setTimeout(() => { if (!done) { reject(new Error("timeout")); cleanup(); } }, 15000);
+    });
+  }
+  function parseGviz(resp) {
+    const t = resp.table;
+    const cols = t.cols.map(c => (c.label || "").trim());
+    return (t.rows || []).filter(r => r && r.c).map(r => {
+      const o = {};
+      r.c.forEach((cell, i) => { o[cols[i] || ("col" + i)] = cell ? (cell.v != null ? cell.v : null) : null; });
+      return o;
+    });
+  }
+  const normlabel = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[?\s]/g, "");
+  function pick(row, names) { for (const n of names) { const nn = normlabel(n); for (const k in row) if (normlabel(k) === nn) return row[k]; } return null; }
+  function num(v) { if (v == null || v === "") return null; if (typeof v === "number") return v; const n = parseFloat(String(v).replace(/[^\d.,-]/g, "").replace(",", ".")); return isNaN(n) ? null : n; }
+
+  function adsFromRows(rows) {
+    const R = rows.map(r => ({
+      periode: pick(r, ["Période", "Periode"]), annee: +pick(r, ["Année", "Annee"]) || 0,
+      cout_ga: num(pick(r, ["Coût GA", "Cout GA"])), demande_devis: num(pick(r, ["Demande de devis"])),
+      nb_rdv: num(pick(r, ["Nombre de RDV"])), nb_opes: num(pick(r, ["Nombre d'opés", "Nombre d opes"])),
+      tx_conv_devis: num(pick(r, ["Tx de conv devis"])), ca: num(pick(r, ["CA généré", "CA genere"])),
+      marge: num(pick(r, ["Marge"])), roas_ca: num(pick(r, ["ROAS CA"])), roas_marge: num(pick(r, ["ROAS Marge"]))
+    })).filter(r => r.periode && r.ca != null);
+    return { columns: ADS_COLS, rows: R };
+  }
+  function seoFromRows(rows) {
+    const R = rows.map(r => ({
+      site: pick(r, ["Quel site ?", "Quel site", "Site"]), mois: pick(r, ["Mois"]),
+      annee: +pick(r, ["Année", "Annee"]) || null,
+      authority: num(pick(r, ["Authority Score"])), trafic: num(pick(r, ["Trafic organique"])),
+      nb_mc: num(pick(r, ["Nombre de MC"])), top3: num(pick(r, ["MC en top 3"])),
+      top10: num(pick(r, ["MC en top 10"])), top20: num(pick(r, ["MC en top 20"])),
+      amelioration: pick(r, ["Amélioration ?", "Amelioration"])
+    })).filter(r => r.mois);
+    R.sort((a, b) => (a.annee - b.annee) || (MONTH_ORDER.indexOf(a.mois) - MONTH_ORDER.indexOf(b.mois)));
+    return { columns: SEO_COLS, rows: R };
+  }
+
+  function panelError(sel, msg) { const c = $(sel); if (c) c.innerHTML = '<div class="empty">' + msg + '</div>'; }
+
+  async function init() {
+    setupTabs();
+    const cfg = window.__CFG__ || {};
+    renderOKRs(window.__OKRS__ || { quarters: [] });
+    $("#loading").style.display = "none";
+    const src = $("#data-source"); src.textContent = "● Données live"; src.classList.add("live");
+    const now = new Date().toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    $("#last-updated").textContent = "Chargé : " + now;
+    $("#footer-updated").textContent = "Chargé le " + now;
+    loadSheet(cfg.adsSheetId, cfg.adsSheet, cfg.adsGid)
+      .then(rows => renderAds(adsFromRows(rows)))
+      .catch(() => panelError("#ads-cards", "Impossible de charger Google Ads. Vérifie que la Google Sheet est partagée « Tout utilisateur disposant du lien : Lecteur »."));
+    loadSheet(cfg.seoSheetId, cfg.seoSheet, null)
+      .then(rows => { const s = seoFromRows(rows); if (!s.rows.length) throw new Error("vide"); renderSEO(s); })
+      .catch(() => panelError("#seo-cards", "Onglet « SEO » introuvable ou vide dans la Google Sheet. Crée un onglet nommé « SEO » et colle-y le fichier SEO_a_importer.csv."));
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+
+</script>
+</body>
+</html>
