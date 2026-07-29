@@ -152,6 +152,34 @@ h1{letter-spacing:-0.02em}
 .chart-area{position:relative;height:300px;width:100%}
 .chart-area canvas{display:block}
 
+/* ---------- Filtres / tri ---------- */
+.section-label{font-size:13px;font-weight:600;color:var(--text-2);margin:4px 0 12px}
+.table-tools{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;align-items:center}
+.tool{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500}
+.tool select{font-family:inherit;font-size:12.5px;padding:6px 10px;border-radius:8px;border:1px solid var(--border-2);
+  background:#fff;color:var(--text);font-weight:500;cursor:pointer}
+.tool select:focus{outline:2px solid var(--accent-weak);border-color:var(--accent)}
+.tool.check{cursor:pointer;color:var(--text-2)}
+.tool.check input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.data-table th.sortable{cursor:pointer;user-select:none}
+.data-table th.sortable:hover{color:var(--text-2)}
+.data-table th .arrow{color:var(--accent);font-size:9px;margin-left:3px}
+
+/* ---------- Comparateur ---------- */
+.compare-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px 12px;margin-bottom:22px}
+.compare-box:empty{display:none}
+.compare-head{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px}
+.compare-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.compare-controls .vs{font-size:12px;color:var(--muted);font-weight:600}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.compare-table th{text-align:right;font-weight:500;font-size:12px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border)}
+.compare-table th:first-child{text-align:left}
+.compare-table td{text-align:right;padding:9px 12px;border-bottom:1px solid var(--slate-weak);color:var(--text-2);font-variant-numeric:tabular-nums}
+.compare-table tbody tr:last-child td{border-bottom:none}
+.compare-table td.kpi{text-align:left;color:var(--text);font-weight:500}
+.compare-table td.pos{color:var(--green);font-weight:600}
+.compare-table td.neg{color:var(--red);font-weight:600}
+
 /* ---------- Footer ---------- */
 .page-footer{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:36px;padding-top:18px;border-top:1px solid var(--border)}
 
@@ -220,6 +248,9 @@ h1{letter-spacing:-0.02em}
           </div>
           <div class="cards" id="ads-cards"></div>
           <div class="chart-box"><div class="chart-title">CA généré &amp; ROAS — 24 derniers mois</div><div class="chart-area"><canvas id="ads-chart"></canvas></div></div>
+          <div class="compare-box" id="ads-compare"></div>
+          <div class="section-label">Détail mensuel</div>
+          <div class="table-tools" id="ads-tools"></div>
           <div class="table-scroll"><table class="data-table" id="ads-table"></table></div>
         </section>
 
@@ -230,6 +261,9 @@ h1{letter-spacing:-0.02em}
           </div>
           <div class="cards" id="seo-cards"></div>
           <div class="chart-box"><div class="chart-title">Trafic organique &amp; mots-clés Top 3</div><div class="chart-area"><canvas id="seo-chart"></canvas></div></div>
+          <div class="compare-box" id="seo-compare"></div>
+          <div class="section-label">Détail mensuel</div>
+          <div class="table-tools" id="seo-tools"></div>
           <div class="table-scroll"><table class="data-table" id="seo-table"></table></div>
         </section>
 
@@ -1396,17 +1430,47 @@ window.__OKRS__={
       card(fmtEur(coutYtd), "Coût Google Ads " + curYear, "cumul dépense", null,
         { spark: yearRows.map(r => r.cout_ga), sparkColor: COLORS.amber })
     );
-    // Corps du tableau
-    const bodyRows = active.map(r => [
-      r.periode, { v: r.annee, cls: "yr num" }, { v: fmtEur(r.cout_ga), cls: "num" }, { v: fmtInt(r.demande_devis), cls: "num" },
-      { v: fmtInt(r.nb_rdv), cls: "num" }, { v: fmtInt(r.nb_opes), cls: "num" }, { v: fmtPct(r.tx_conv_devis), cls: "num" },
-      { v: fmtEur(r.ca), cls: "num" }, { v: fmtEur(r.marge), cls: "num" },
-      { v: fmtNum2(r.roas_ca), cls: "num " + (r.roas_ca >= 1 ? "pos" : (r.ca ? "neg" : "")) },
-      { v: fmtNum2(r.roas_marge), cls: "num " + (r.roas_marge >= 1 ? "pos" : (r.ca ? "neg" : "")) }
-    ]);
-    // Récap en bas : total par année + total général
-    const footRows = adsRecap(active);
-    buildTable($("#ads-table"), ads.columns, bodyRows, footRows);
+    // Comparateur A vs B
+    const adsMetrics = [
+      { label: "Coût GA", get: r => r.cout_ga, fmt: fmtEur, invert: true },
+      { label: "Demande de devis", get: r => r.demande_devis, fmt: fmtInt },
+      { label: "Nombre de RDV", get: r => r.nb_rdv, fmt: fmtInt },
+      { label: "Nombre d'opportunités", get: r => r.nb_opes, fmt: fmtInt },
+      { label: "CA généré", get: r => r.ca, fmt: fmtEur },
+      { label: "Marge", get: r => r.marge, fmt: fmtEur },
+      { label: "ROAS CA", get: r => r.roas_ca, fmt: fmtNum2 },
+    ];
+    compareBox($("#ads-compare"), active.map(r => ({ label: r.periode + " " + r.annee, row: r })), adsMetrics);
+
+    // Tableau triable + filtres
+    const mi = r => MONTH_ORDER.indexOf(r.periode);
+    const adsCols = [
+      { label: "Période", get: r => r.annee * 100 + mi(r), fmt: (v, r) => r.periode + " " + r.annee },
+      { label: "Année", get: r => r.annee, fmt: v => String(v), cls: "num yr" },
+      { label: "Coût GA (€)", get: r => r.cout_ga, fmt: v => fmtEur(v), cls: "num" },
+      { label: "Demande de devis", get: r => r.demande_devis, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Nombre de RDV", get: r => r.nb_rdv, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Nombre d'opés", get: r => r.nb_opes, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Tx de conv devis", get: r => r.tx_conv_devis, fmt: v => fmtPct(v), cls: "num" },
+      { label: "CA généré (€)", get: r => r.ca, fmt: v => fmtEur(v), cls: "num" },
+      { label: "Marge (€)", get: r => r.marge, fmt: v => fmtEur(v), cls: "num" },
+      { label: "ROAS CA", get: r => r.roas_ca, fmt: v => fmtNum2(v), cls: "num" },
+      { label: "ROAS Marge", get: r => r.roas_marge, fmt: v => fmtNum2(v), cls: "num" },
+    ];
+    const adsDt = makeDataTable($("#ads-table"), adsCols, active, adsRecap(active), { idx: 0, dir: -1 });
+    const adsYears = [...new Set(active.map(r => r.annee))].sort();
+    let fYear = "all", fHideZero = false;
+    const adsApply = () => {
+      let r = active;
+      if (fYear !== "all") r = r.filter(x => x.annee === +fYear);
+      if (fHideZero) r = r.filter(x => x.ca > 0);
+      adsDt.setData(r, adsRecap(r));
+    };
+    const adsTools = $("#ads-tools"); adsTools.innerHTML = "";
+    adsTools.append(
+      selectControl("Année", [{ label: "Toutes", value: "all" }].concat(adsYears.map(y => ({ label: String(y), value: y }))), "all", v => { fYear = v; adsApply(); }),
+      checkControl("Masquer les mois sans CA", false, v => { fHideZero = v; adsApply(); })
+    );
     // Chart : 24 derniers mois
     const recent = active.slice(-24);
     const labels = recent.map(r => r.periode.slice(0, 3) + " " + String(r.annee).slice(2));
@@ -1449,13 +1513,45 @@ window.__OKRS__={
       card(fmtInt(last.top10), "Mots-clés Top 10", lbl, null, { spark: m12.map(r => r.top10), sparkColor: COLORS.teal, chip: { cur: last.top10, prev: prev.top10 } }),
       card(fmtInt(last.nb_mc), "Mots-clés suivis", lbl, null, { spark: m12.map(r => r.nb_mc), sparkColor: COLORS.amber, chip: { cur: last.nb_mc, prev: prev.nb_mc } })
     );
-    // Tableau : le plus récent en haut, détail Vitrine / Blog conservé
-    const tableRows = [...rows].sort((a, b) => (b.annee - a.annee) || (monthIndex(b.mois) - monthIndex(a.mois)) || (a.site || "").localeCompare(b.site || ""));
-    buildTable($("#seo-table"), seo.columns, tableRows.map(r => [
-      { v: siteTag(r.site), raw: true }, r.mois, { v: r.annee, cls: "yr num" }, { v: fmtInt(r.authority), cls: "num" }, { v: fmtInt(r.trafic), cls: "num" },
-      { v: fmtInt(r.nb_mc), cls: "num" }, { v: fmtInt(r.top3), cls: "num" }, { v: fmtInt(r.top10), cls: "num" }, { v: fmtInt(r.top20), cls: "num" },
-      { v: tagFor(r.amelioration), raw: true }
-    ]));
+    // Comparateur A vs B (mois agrégés Vitrine + Blog)
+    const seoMetrics = [
+      { label: "Trafic organique", get: r => r.trafic, fmt: fmtInt },
+      { label: "Mots-clés suivis", get: r => r.nb_mc, fmt: fmtInt },
+      { label: "MC en top 3", get: r => r.top3, fmt: fmtInt },
+      { label: "MC en top 10", get: r => r.top10, fmt: fmtInt },
+      { label: "MC en top 20", get: r => r.top20, fmt: fmtInt },
+      { label: "Authority Score", get: r => r.authority, fmt: fmtInt },
+    ];
+    compareBox($("#seo-compare"), monthly.map(r => ({ label: r.mois + " " + r.annee, row: r })), seoMetrics);
+
+    // Tableau triable + filtres (détail Vitrine / Blog conservé)
+    const seoCols = [
+      { label: "Quel site ?", get: r => r.site || "", fmt: (v, r) => siteTag(r.site), raw: true },
+      { label: "Mois", get: r => (r.annee || 0) * 100 + monthIndex(r.mois), fmt: (v, r) => r.mois },
+      { label: "Année", get: r => r.annee, fmt: v => String(v || ""), cls: "num yr" },
+      { label: "Authority Score", get: r => r.authority, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Trafic organique", get: r => r.trafic, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Nombre de MC", get: r => r.nb_mc, fmt: v => fmtInt(v), cls: "num" },
+      { label: "MC en top 3", get: r => r.top3, fmt: v => fmtInt(v), cls: "num" },
+      { label: "MC en top 10", get: r => r.top10, fmt: v => fmtInt(v), cls: "num" },
+      { label: "MC en top 20", get: r => r.top20, fmt: v => fmtInt(v), cls: "num" },
+      { label: "Amélioration ?", get: r => r.amelioration || "", fmt: (v, r) => tagFor(r.amelioration), raw: true },
+    ];
+    const seoDt = makeDataTable($("#seo-table"), seoCols, rows, null, { idx: 1, dir: -1 });
+    const seoYears = [...new Set(rows.map(r => r.annee).filter(Boolean))].sort();
+    const sites = [...new Set(rows.map(r => r.site).filter(Boolean))];
+    let sSite = "all", sYear = "all";
+    const seoApply = () => {
+      let r = rows;
+      if (sSite !== "all") r = r.filter(x => x.site === sSite);
+      if (sYear !== "all") r = r.filter(x => x.annee === +sYear);
+      seoDt.setData(r, null);
+    };
+    const seoTools = $("#seo-tools"); seoTools.innerHTML = "";
+    seoTools.append(
+      selectControl("Site", [{ label: "Tous", value: "all" }].concat(sites.map(s => ({ label: s, value: s }))), "all", v => { sSite = v; seoApply(); }),
+      selectControl("Année", [{ label: "Toutes", value: "all" }].concat(seoYears.map(y => ({ label: String(y), value: y }))), "all", v => { sYear = v; seoApply(); })
+    );
     const labels = monthly.map(r => (r.mois || "").slice(0, 3) + " " + String(r.annee).slice(2));
     drawChart("seo-chart", seoChart, c => (seoChart = c), "line", {
       labels,
@@ -1530,6 +1626,122 @@ window.__OKRS__={
     const foot = years.map(y => mk("Total " + y, active.filter(r => r.annee === y), false));
     foot.push(mk("Total général", active, true));
     return foot;
+  }
+
+  /* ---------------- Tableau triable + filtrable ---------------- */
+  function makeDataTable(table, columns, rows, foot, initSort) {
+    let sortIdx = initSort ? initSort.idx : null;
+    let sortDir = initSort ? initSort.dir : 1;
+    let curRows = rows.slice(), curFoot = foot || null;
+
+    function paint() {
+      table.innerHTML = "";
+      const thead = el("thead"), trh = el("tr");
+      columns.forEach((c, i) => {
+        const th = el("th");
+        const sortable = c.sortable !== false;
+        th.innerHTML = escapeHtml(c.label) + (sortable ? ' <span class="arrow">' + (sortIdx === i ? (sortDir > 0 ? "▲" : "▼") : "") + "</span>" : "");
+        if (sortable) {
+          th.classList.add("sortable");
+          th.addEventListener("click", () => { if (sortIdx === i) sortDir = -sortDir; else { sortIdx = i; sortDir = 1; } paint(); });
+        }
+        trh.append(th);
+      });
+      thead.append(trh); table.append(thead);
+
+      let rr = curRows.slice();
+      if (sortIdx != null) {
+        const c = columns[sortIdx];
+        rr.sort((a, b) => {
+          let x = c.get(a), y = c.get(b);
+          const xn = (x == null || x === ""), yn = (y == null || y === "");
+          if (xn && yn) return 0; if (xn) return 1; if (yn) return -1;
+          if (typeof x === "number" && typeof y === "number") return (x - y) * sortDir;
+          return String(x).localeCompare(String(y), "fr") * sortDir;
+        });
+      }
+      const tb = el("tbody");
+      rr.forEach(row => {
+        const tr = el("tr");
+        columns.forEach(c => {
+          const td = el("td", c.cls || null);
+          const val = c.fmt ? c.fmt(c.get(row), row) : c.get(row);
+          if (c.raw) td.innerHTML = val; else td.textContent = val;
+          tr.append(td);
+        });
+        tb.append(tr);
+      });
+      table.append(tb);
+      if (curFoot && curFoot.length) {
+        const tf = el("tfoot");
+        curFoot.forEach(r => { const tr = el("tr"); rowTo(tr, r); tf.append(tr); });
+        table.append(tf);
+      }
+    }
+    paint();
+    return { setData: (r, f) => { curRows = r.slice(); curFoot = f || null; paint(); } };
+  }
+
+  function selectControl(label, options, value, onChange) {
+    const wrap = el("label", "tool");
+    wrap.append(document.createTextNode(label));
+    const sel = el("select");
+    options.forEach(o => sel.append(new Option(o.label, o.value)));
+    sel.value = value;
+    sel.addEventListener("change", () => onChange(sel.value));
+    wrap.append(sel);
+    return wrap;
+  }
+
+  function checkControl(label, checked, onChange) {
+    const wrap = el("label", "tool check");
+    const cb = el("input"); cb.type = "checkbox"; cb.checked = checked;
+    cb.addEventListener("change", () => onChange(cb.checked));
+    wrap.append(cb, document.createTextNode(label));
+    return wrap;
+  }
+
+  /* ---------------- Comparateur A vs B ---------------- */
+  function compareBox(container, periods, metrics) {
+    container.innerHTML = "";
+    if (periods.length < 2) return;
+    container.append(el("div", "compare-head", "Comparateur de périodes"));
+    const controls = el("div", "compare-controls");
+    const selA = el("select"), selB = el("select");
+    periods.forEach((p, i) => { selA.append(new Option(p.label, i)); selB.append(new Option(p.label, i)); });
+    selA.value = periods.length - 2; selB.value = periods.length - 1;
+    const wA = el("label", "tool"); wA.append(document.createTextNode("Période A"), selA);
+    const wB = el("label", "tool"); wB.append(document.createTextNode("Période B"), selB);
+    controls.append(wA, el("span", "vs", "vs"), wB);
+    const tbl = el("table", "compare-table");
+    container.append(controls, tbl);
+
+    function paint() {
+      const A = periods[+selA.value], B = periods[+selB.value];
+      tbl.innerHTML = "";
+      const th = el("thead");
+      th.innerHTML = "<tr><th>KPI</th><th>" + escapeHtml(A.label) + "</th><th>" + escapeHtml(B.label) + "</th><th>Δ</th><th>Δ %</th></tr>";
+      tbl.append(th);
+      const tb = el("tbody");
+      metrics.forEach(m => {
+        const a = m.get(A.row), b = m.get(B.row);
+        const d = (a == null || b == null) ? null : (b - a);
+        const pct = (d == null || !a) ? null : d / Math.abs(a);
+        const good = d == null ? 0 : (m.invert ? -d : d);
+        const cls = good > 0 ? "pos" : (good < 0 ? "neg" : "");
+        const tr = el("tr");
+        tr.innerHTML =
+          '<td class="kpi">' + escapeHtml(m.label) + "</td>" +
+          '<td class="num">' + m.fmt(a) + "</td>" +
+          '<td class="num">' + m.fmt(b) + "</td>" +
+          '<td class="num ' + cls + '">' + (d == null ? "—" : (d > 0 ? "+" : "") + m.fmt(d)) + "</td>" +
+          '<td class="num ' + cls + '">' + (pct == null ? "—" : (pct > 0 ? "+" : "") + nf0.format(pct * 100) + " %") + "</td>";
+        tb.append(tr);
+      });
+      tbl.append(tb);
+    }
+    selA.onchange = selB.onchange = paint;
+    paint();
   }
 
   function drawChart(id, existing, store, type, data, scales) {
