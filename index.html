@@ -294,6 +294,72 @@ window.__CFG__={"adsSheetId": "1wsiYx4KZ68aSoMSL7nzST-iZKfBYwmw3zXjBnSqnz9k", "a
 window.__OKRS__={
   "quarters": [
     {
+      "quarter": "Q3 2026",
+      "objectives": [
+        {
+          "objective": "Améliorer l'acquisition Inbound",
+          "key_results": [
+            {
+              "name": "Maintenir un coût par RDV booké moyen à 40 €",
+              "current": 12.9,
+              "target": 100,
+              "mois": null,
+              "progress": 0.13,
+              "status": null
+            },
+            {
+              "name": "Générer 93 RDV bookés issus des actions marketing",
+              "current": 81,
+              "target": 93,
+              "mois": null,
+              "progress": 0.87,
+              "status": null
+            },
+            {
+              "name": "Générer 69 leads via le SEO",
+              "current": 47,
+              "target": 69,
+              "mois": null,
+              "progress": 0.68,
+              "status": null
+            },
+            {
+              "name": "Générer 250 leads via Google Ads",
+              "current": 159,
+              "target": 250,
+              "mois": null,
+              "progress": 0.64,
+              "status": null
+            },
+            {
+              "name": "Générer 53 000€ de CA via l'inbound",
+              "current": 46217.24,
+              "target": 53000,
+              "mois": null,
+              "progress": 0.87,
+              "status": null
+            },
+            {
+              "name": "Positionner 65 mots-clés business dans le Top 3",
+              "current": 35,
+              "target": 65,
+              "mois": null,
+              "progress": 0.54,
+              "status": null
+            },
+            {
+              "name": "Atteindre 1 335 visites SEO",
+              "current": 977,
+              "target": 1335,
+              "mois": null,
+              "progress": 0.73,
+              "status": null
+            }
+          ]
+        }
+      ]
+    },
+    {
       "quarter": "Q2 2026",
       "objectives": [
         {
@@ -1264,8 +1330,8 @@ window.__OKRS__={
       ]
     }
   ],
-  "count": 105,
-  "note": "Vue Market — Q3 2026 exclu (non terminé)"
+  "count": 112,
+  "note": "Vue Market — à jour au T3 2026"
 };
 </script>
 <script>
@@ -1303,16 +1369,18 @@ window.__OKRS__={
     // Cards : trimestre courant (le premier)
     const cardsWrap = $("#okrs-cards"); cardsWrap.innerHTML = "";
     if (quarters.length) {
-      const cur = quarters[0];
-      const krs = cur.objectives.flatMap(o => o.key_results);
-      const withProg = krs.filter(k => typeof k.progress === "number");
-      const avg = withProg.length ? withProg.reduce((s, k) => s + Math.max(0, Math.min(k.progress, 1)), 0) / withProg.length : 0;
-      const nObj = cur.objectives.length;
+      const allKrs = quarters.flatMap(q => q.objectives.flatMap(o => o.key_results));
+      const vals = allKrs.map(k => k.status ? 1 : (typeof k.progress === "number" ? Math.max(0, Math.min(k.progress, 1)) : null)).filter(v => v !== null);
+      const avgAll = vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0;
+      const total = allKrs.length;
+      const atLeast80 = vals.filter(v => v >= 0.8).length;
+      const ql = quarters.map(q => q.quarter);
+      const span = ql[ql.length - 1] + " → " + ql[0];
       cardsWrap.append(
-        card(cur.quarter, "Trimestre en cours", nObj + " objectif" + (nObj > 1 ? "s" : "") + " suivi" + (nObj > 1 ? "s" : ""), "accent-1"),
-        card(nf0.format(avg * 100) + " %", "Progression moyenne", "sur " + krs.length + " key results", "accent-2"),
-        card(String(krs.length), "Key Results ce trimestre", "objectifs clés mesurés", "accent-3"),
-        card(String(okrs.count || krs.length), "Historique", "KR sur tous les trimestres", "accent-4")
+        card(nf0.format(avgAll * 100) + " %", "Progression moyenne", "toutes périodes · " + total + " KR", "accent-2"),
+        card(String(atLeast80), "KR à 80 % ou plus", "sur " + total + " key results", "accent-1"),
+        card(String(quarters.length), "Trimestres suivis", span, "accent-3"),
+        card(String(total), "Key Results", "sur tout l'historique", "accent-4")
       );
     }
     // Filtre trimestre
